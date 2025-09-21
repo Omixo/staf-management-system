@@ -9,11 +9,10 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**") // apply CORS to all endpoints
-                .allowedOriginPatterns("http://localhost:3000") // your React dev server
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // HTTP methods
-                .allowedHeaders("*") // allow all headers
-                .allowCredentials(true) // allow cookies/auth headers
-                .maxAge(3600); // cache preflight response for 1 hour
+        registry.addMapping("/**")
+                .allowedOrigins("http://localhost:5173") // your React dev server
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedHeaders("*")
+                .allowCredentials(true);
     }
 }
