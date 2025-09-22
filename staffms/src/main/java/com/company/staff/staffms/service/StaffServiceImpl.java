@@ -5,6 +5,7 @@ import com.company.staff.staffms.repository.StaffRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,7 +25,7 @@ public class StaffServiceImpl implements StaffService {
     }
 
     @Override
-    public StaffMember getStaff(Integer id) {
+    public StaffMember getStaff(Long id) {
         return staffRepository.findById(id).orElse(null);
     }
 
@@ -34,7 +35,7 @@ public class StaffServiceImpl implements StaffService {
     }
 
     @Override
-    public StaffMember updateStaff(Integer id, StaffMember staff) {
+    public StaffMember updateStaff(Long id, StaffMember staff) {
         Optional<StaffMember> existing = staffRepository.findById(id);
         if (existing.isPresent()) {
             StaffMember updated = existing.get();
@@ -48,7 +49,7 @@ public class StaffServiceImpl implements StaffService {
     }
 
     @Override
-    public boolean deleteStaff(Integer id) {
+    public boolean deleteStaff(Long id) {
         Optional<StaffMember> existing = staffRepository.findById(id);
         if (existing.isPresent()) {
             staffRepository.delete(existing.get());
@@ -60,5 +61,22 @@ public class StaffServiceImpl implements StaffService {
     @Override
     public int countStaff() {
         return (int) staffRepository.count();
+    }
+
+    @Override
+    public List<StaffMember> searchStaff(String dept, String manager, Long staffId) {
+        List<StaffMember> result = new ArrayList<>();
+
+        if (dept != null && !dept.isEmpty()) {
+            result.addAll(staffRepository.findByDepartmentNameContainingIgnoreCase(dept));
+        }
+        if (manager != null && !manager.isEmpty()) {
+            result.addAll(staffRepository.findByManagerNameContainingIgnoreCase(manager));
+        }
+        if (staffId != null) {
+            staffRepository.findById(staffId).ifPresent(result::add);
+        }
+
+        return result;
     }
 }

@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { getAllStaff, deleteStaff, countStaff } from "../api/staffApi";
+import { getAllStaff, deleteStaff, countStaff, searchStaff } from "../api/staffApi";
 
 const StaffTable = () => {
   const [staffList, setStaffList] = useState([]);
   const [staffCount, setStaffCount] = useState(0);
+
+  // Search states
+  const [searchDept, setSearchDept] = useState("");
+  const [searchManager, setSearchManager] = useState("");
+  const [searchId, setSearchId] = useState("");
 
   useEffect(() => {
     fetchStaff();
@@ -38,14 +43,23 @@ const StaffTable = () => {
     }
   };
 
-  const handleEdit = (id) => {
-    // Implement edit logic (e.g., open modal or navigate)
-    alert(`Edit staff ${id}`);
+  const handleEdit = (id) => alert(`Edit staff ${id}`);
+  const handleView = (id) => alert(`View staff ${id}`);
+
+  const handleSearch = async () => {
+    try {
+      const res = await searchStaff(searchDept, searchManager, searchId || null);
+      setStaffList(res.data);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  const handleView = (id) => {
-    // Implement view logic (e.g., open modal or navigate)
-    alert(`View staff ${id}`);
+  const handleReset = () => {
+    setSearchDept("");
+    setSearchManager("");
+    setSearchId("");
+    fetchStaff();
   };
 
   return (
@@ -56,6 +70,44 @@ const StaffTable = () => {
           Total Staff: {staffCount}
         </div>
       </div>
+
+      {/* Search Filters */}
+      <div className="flex gap-4 mb-4">
+        <input
+          type="text"
+          placeholder="Department"
+          value={searchDept}
+          onChange={(e) => setSearchDept(e.target.value)}
+          className="border px-2 py-1 rounded"
+        />
+        <input
+          type="text"
+          placeholder="Manager"
+          value={searchManager}
+          onChange={(e) => setSearchManager(e.target.value)}
+          className="border px-2 py-1 rounded"
+        />
+        <input
+          type="number"
+          placeholder="Staff ID"
+          value={searchId}
+          onChange={(e) => setSearchId(e.target.value)}
+          className="border px-2 py-1 rounded"
+        />
+        <button
+          onClick={handleSearch}
+          className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded"
+        >
+          Search
+        </button>
+        <button
+          onClick={handleReset}
+          className="bg-gray-400 hover:bg-gray-500 text-white px-3 py-1 rounded"
+        >
+          Reset
+        </button>
+      </div>
+
       <div className="bg-white rounded-lg shadow border border-gray-200 overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
@@ -80,44 +132,21 @@ const StaffTable = () => {
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
-            {staffList.map((staff) => (
-              <tr key={staff.staffNo} className="hover:bg-gray-50">
-                <td className="px-4 py-2">{staff.staffId}</td>
-                <td className="px-4 py-2">{staff.fullName}</td>
-                <td className="px-4 py-2">{staff.managerName}</td>
-                <td className="px-4 py-2">{staff.departmentName}</td>
-                <td className="px-4 py-2">{staff.annualSalary}</td>
-                <td className="px-4 py-2 flex gap-2 justify-center">
-                  <button
-                    onClick={() => handleView(staff.staffNo)}
-                    className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded transition"
-                  >
-                    View
-                  </button>
-                  <button
-                    onClick={() => handleEdit(staff.staffNo)}
-                    className="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded transition"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(staff.staffNo)}
-                    className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded transition"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-            {staffList.length === 0 && (
-              <tr>
-                <td colSpan={6} className="px-4 py-6 text-center text-gray-400">
-                  No staff found.
-                </td>
-              </tr>
-            )}
-          </tbody>
+         <tbody className="divide-y divide-gray-100">
+  {staffList.map((staff) => (
+    <tr key={staff.staffNo} className="hover:bg-gray-50">
+      <td className="px-4 py-2">{staff.staffNo}</td>
+      <td className="px-4 py-2">{staff.fullName}</td>
+      <td className="px-4 py-2">{staff.managerName}</td>
+      <td className="px-4 py-2">{staff.departmentName}</td>
+      <td className="px-4 py-2">{staff.annualSalary}</td>
+      <td className="px-4 py-2 flex gap-2 justify-center">
+        ...
+      </td>
+    </tr>
+  ))}
+</tbody>
+
         </table>
       </div>
     </div>

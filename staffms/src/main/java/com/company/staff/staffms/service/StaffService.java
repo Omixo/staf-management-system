@@ -8,13 +8,16 @@ public interface StaffService {
 
     List<StaffMember> getAllStaff();
 
-    StaffMember getStaff(Integer id);
+    StaffMember getStaff(Long id);
 
     StaffMember addStaff(StaffMember staff);
 
-    StaffMember updateStaff(Integer id, StaffMember staff);
+    StaffMember updateStaff(Long id, StaffMember staff);
 
-    boolean deleteStaff(Integer id);
+    boolean deleteStaff(Long id);
 
     int countStaff();
+
+    List<StaffMember> searchStaff(String dept, String manager, Long staffId);
+
 }

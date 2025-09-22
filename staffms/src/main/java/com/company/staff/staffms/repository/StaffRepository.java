@@ -1,15 +1,18 @@
 package com.company.staff.staffms.repository;
 
-import com.company.staff.staffms.entity.*;
+import com.company.staff.staffms.entity.StaffMember;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import org.springframework.data.jpa.repository.*;
+import java.util.List;
 
-import java.util.*;
+@Repository
+public interface StaffRepository extends JpaRepository<StaffMember, Long> {
 
-public interface StaffRepository extends JpaRepository<StaffMember, Integer> {
-    Optional<StaffMember> findByStaffId(String staffId);
-    List<StaffMember> findByDepartmentName(String departmentName);
-    List<StaffMember> findByManagerName(String managerName);    
-    List<StaffMember> findByAnnualSalary(Double annualSalary);
-    
+    // Custom search methods
+    List<StaffMember> findByDepartmentNameContainingIgnoreCase(String departmentName);
+
+    List<StaffMember> findByManagerNameContainingIgnoreCase(String managerName);
+
+    // DON'T override findById with StaffMember return type!
 }
